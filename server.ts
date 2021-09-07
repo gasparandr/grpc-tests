@@ -23,7 +23,7 @@ function main() {
   const server = getServer();
 
   server.bindAsync(
-    `localhost:${PORT}`,
+    `0.0.0.0:${PORT}`,
     grpc.ServerCredentials.createInsecure(),
     (err, port) => {
       if (err) {
