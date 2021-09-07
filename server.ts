@@ -5,6 +5,7 @@ import { ProtoGrpcType } from './proto/random';
 import { RandomHandlers } from './proto/randomPackage/Random';
 import { TodoRequest } from './proto/randomPackage/TodoRequest';
 import { TodoResponse } from './proto/randomPackage/TodoResponse';
+import * as fs from 'fs';
 
 const PORT = 8082;
 const PROTO_FILE = './proto/random.proto';
@@ -15,16 +16,33 @@ const grpcObj = grpc.loadPackageDefinition(
   packageDef
 ) as unknown as ProtoGrpcType;
 
-console.log(grpcObj);
-
 const randomPackage = grpcObj.randomPackage;
+
+const rootCert = fs.readFileSync(
+  path.resolve(__dirname, './certs/ca-cert.pem')
+);
+const serverKey = fs.readFileSync(
+  path.resolve(__dirname, './certs/server-key.pem')
+);
+const serverCert = fs.readFileSync(
+  path.resolve(__dirname, './certs/server-cert.pem')
+);
+// const sslCreds = grpc.credentials.createSsl(rootCert);
+
+const sslCreds = grpc.ServerCredentials.createSsl(rootCert, [
+  {
+    private_key: serverKey,
+    cert_chain: serverCert,
+  },
+]);
 
 function main() {
   const server = getServer();
 
   server.bindAsync(
-    `localhost:${PORT}`,
-    grpc.ServerCredentials.createInsecure(),
+    `0.0.0.0:${PORT}`,
+    // grpc.ServerCredentials.createInsecure(),
+    sslCreds,
     (err, port) => {
       if (err) {
         console.error(err);
@@ -41,8 +59,9 @@ const todoList: TodoResponse = { todos: [] };
 function getServer() {
   const server = new grpc.Server();
   server.addService(randomPackage.Random.service, {
-    PingPong: (req, res) => {
-      console.log(req.request);
+    PingPong: (call, res) => {
+      console.log('TOKEN: ', call.metadata.get('authorization'));
+      console.log(call.request);
       res(null, { message: 'Pong' });
     },
     RandomNumbers: (call) => {

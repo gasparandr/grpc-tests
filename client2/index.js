@@ -7,8 +7,11 @@ const packageDef = loader.loadSync(PROTO_PATH);
 
 const randomProto = grpc.loadPackageDefinition(packageDef).randomPackage;
 
+const address = '3.68.194.144:8082';
+// const address = 'localhost:8082';
+
 const client = new randomProto.Random(
-  `localhost:8082`,
+  address,
   grpc.credentials.createInsecure()
 );
 
