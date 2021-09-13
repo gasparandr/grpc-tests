@@ -1,0 +1,28 @@
+syntax = "proto3";
+package mygameprogram.api.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service MygameprogramService {
+  rpc CreateAsset(AssetCreationRequest) returns (AssetCreationResponse);
+}
+
+message AssetCreationRequest {
+  string association_id = 1;
+  string category_id = 2;
+  google.protobuf.Timestamp match_start = 3;
+  string title = 4;
+  map<string, AssetPublishingDetails> asset_publishing_details = 5; //Map program_id to publishing
+}
+
+message AssetPublishingDetails {
+  google.protobuf.Timestamp exposure_start = 1;
+  google.protobuf.Timestamp exposure_end = 2;
+  google.protobuf.Timestamp publication_start = 3;
+  google.protobuf.Timestamp publication_end = 4;
+}
+
+message AssetCreationResponse {
+  string asset_id = 1;
+  string unique_id = 2;
+}
