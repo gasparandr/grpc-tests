@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "proto:gen:script": "npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/ proto/random.proto",
+    "proto:gen:script:tv2": "npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto-tv2/ proto-tv2/mygameprogram_service.proto",
     "proto:gen": "./proto-gen.sh",
     "start": "ts-node server",
+    "start:tv2": "ts-node server2",
     "client": "ts-node client"
   },
   "author": "",
@@ -16,5 +18,6 @@
     "@grpc/proto-loader": "^0.6.4",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.2"
-  }
+  },
+  "dependencies": {}
 }
